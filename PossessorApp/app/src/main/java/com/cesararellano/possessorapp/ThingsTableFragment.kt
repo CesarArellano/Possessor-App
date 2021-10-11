@@ -71,12 +71,14 @@ class ThingsTableFragment: Fragment() {
 
         val nameTextView: TextView = itemView.findViewById(R.id.nameLabel)
         val priceTextView: TextView = itemView.findViewById(R.id.priceLabel)
+        val serialNumberTextView: TextView = itemView.findViewById(R.id.serialNumberLabel)
 
         @SuppressLint("SetTextI18n")
         fun binding(thing:Thing) {
             this.thing = thing
             nameTextView.text = this.thing.thingName
             priceTextView.text = "$${ thing.pesosValue }"
+            serialNumberTextView.text = this.thing.serialNumber
         }
 
         init {

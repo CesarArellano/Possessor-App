@@ -9,11 +9,11 @@ class ThingsTableViewModel: ViewModel() {
     private val adjectives = arrayOf("Gris", "Suave", "Cómoda")
 
     init {
-        for( i in 0 until 100) {
+        for( i in 0 until 50) {
             val thing = Thing()
             val randomName = names.random()
             val randomAdjective = adjectives.random()
-            val randomPrice = Random().nextInt(100)
+            val randomPrice = Random().nextInt(1001)
             thing.thingName = "$randomName - $randomAdjective"
             thing.pesosValue = randomPrice
             inventory += thing
