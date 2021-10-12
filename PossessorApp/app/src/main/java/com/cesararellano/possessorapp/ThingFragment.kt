@@ -1,5 +1,6 @@
 package com.cesararellano.possessorapp
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,8 +8,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 
 class ThingFragment : Fragment() {
 
@@ -33,7 +36,9 @@ class ThingFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 when {
                     s.hashCode() == nameField.text.hashCode() -> {
-                        thing.thingName = s.toString()
+                        if( s.toString().isNotEmpty() ) {
+                            thing.thingName = s.toString()
+                        }
                     }
                     s.hashCode() == priceField.text.hashCode() -> {
                         if(s != null) {
@@ -50,12 +55,18 @@ class ThingFragment : Fragment() {
                 }
             }
 
-            override fun afterTextChanged(p0: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                if(s.toString().isEmpty()) {
+                    Toast.makeText(requireContext(), "Este campo no puede estar vacío", Toast.LENGTH_LONG).show()
+                    nameField.setText(thing.thingName)
+                }
+            }
         }
 
         nameField.addTextChangedListener(textObservable)
         priceField.addTextChangedListener(textObservable)
         serialNumberField.addTextChangedListener(textObservable)
+
     }
 
     override fun onCreateView(
@@ -87,5 +98,10 @@ class ThingFragment : Fragment() {
                 arguments = args
             }
         }
+    }
+
+    private fun View.hideKeyboard() {
+        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PossessorApp</string>
-    <string name="nameLabel">Nombre de la cosa</string>
-    <string name="priceLabel">$Precio</string>
+    <string name="nameLabel">Nombre</string>
+    <string name="priceLabel">Precio</string>
     <string name="serialLabel">No. de Serie</string>
     <string name="dateLabel">Fecha</string>
     <!-- TODO: Remove or change this placeholder text -->

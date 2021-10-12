@@ -2,12 +2,14 @@ package com.cesararellano.possessorapp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,18 +69,38 @@ class ThingsTableFragment: Fragment() {
     }
 
     private inner class ThingHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
+        var itemBackgroundColor = "#FF8B00"
+
         private lateinit var thing: Thing
 
         val nameTextView: TextView = itemView.findViewById(R.id.nameLabel)
         val priceTextView: TextView = itemView.findViewById(R.id.priceLabel)
         val serialNumberTextView: TextView = itemView.findViewById(R.id.serialNumberLabel)
+        val thingItemLayout: ConstraintLayout = itemView.findViewById(R.id.thingItemLayout)
 
         @SuppressLint("SetTextI18n")
         fun binding(thing:Thing) {
+
             this.thing = thing
             nameTextView.text = this.thing.thingName
             priceTextView.text = "$${ thing.pesosValue }"
             serialNumberTextView.text = this.thing.serialNumber
+
+            itemBackgroundColor = when( thing.pesosValue ) {
+                in 0..99 -> "#E45050"
+                in 100..199 -> "#E47D50"
+                in 200..299 -> "#BD8138"
+                in 300..399 -> "#35B046"
+                in 400..499 -> "#4BAF96"
+                in 500..599 -> "#47A8E7"
+                in 600..699 -> "#476BE7"
+                in 700..799 -> "#7747E7"
+                in 800..899 -> "#5F4CB7"
+                in 900..999 -> "#E747AD"
+                else -> "#B74C70"
+            }
+
+            thingItemLayout.setBackgroundColor( Color.parseColor(itemBackgroundColor) )
         }
 
         init {
