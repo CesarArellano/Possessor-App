@@ -49,11 +49,18 @@ class ThingFragment : Fragment() {
                         }
                     }
                     s.hashCode() == priceField.text.hashCode() -> {
+                        // Validando el precio de la cosa.
                         if(s != null) {
-                            if(s.isEmpty()) {
-                                thing.pesosValue = 0
-                            } else {
-                                thing.pesosValue = s.toString().toInt()
+                            when {
+                                s.isEmpty() -> {
+                                    thing.pesosValue = 0
+                                }
+                                s.toString().toInt() > 1000 -> { // Si el usuario ingresa un número mayor a 1000, el valor máximo asignado será 1000.
+                                    thing.pesosValue = 1000
+                                }
+                                else -> {
+                                    thing.pesosValue = s.toString().toInt()
+                                }
                             }
                         }
                     }
