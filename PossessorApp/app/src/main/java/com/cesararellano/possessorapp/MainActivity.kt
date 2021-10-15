@@ -8,9 +8,10 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // supportFragmentManager nos ayudará a pintar el Fragment de tabla de cosas
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if( currentFragment == null ) {
-            // val fragment = ThingFragment()
             val fragment = ThingsTableFragment()
             supportFragmentManager.beginTransaction()
                 .add( R.id.fragment_container, fragment )
@@ -18,9 +19,10 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
         }
     }
 
+    // Este método es implementado por la interfaz ThingTableInterface, esta recibe la posesión (cosa) seleccionada por el usuario
+    // este muestra un toast del nombre de la cosa seleccionada y con este objeto despliega el nuevo fragment con más detalles.
     override fun onSelectedThing(thing: Thing) {
         Toast.makeText(this, "${ thing.thingName } fue seleccionada", Toast.LENGTH_SHORT).show()
-        // val fragment = ThingFragment()
         val fragment = ThingFragment.newInstance(thing)
         supportFragmentManager
             .beginTransaction()
