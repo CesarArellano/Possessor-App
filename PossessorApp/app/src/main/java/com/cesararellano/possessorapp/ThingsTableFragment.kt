@@ -20,7 +20,7 @@ import kotlin.collections.ArrayList
 
 
 class ThingsTableFragment: Fragment() {
-    // Propiedades para generar el RecyclerView
+    // Propiedades para generar el RecyclerView.
     private lateinit var thingRecyclerView: RecyclerView
     private var adapter: ThingAdapter? = null
     private var interfaceCallback:ThingTableInterface? = null
@@ -39,13 +39,13 @@ class ThingsTableFragment: Fragment() {
         interfaceCallback = context as ThingTableInterface?
     }
 
-    // Utilizamos este método para quitar la referencias del callback.
+    // Utilizamos este método para quitar la referencia del callback.
     override fun onDetach() {
         super.onDetach()
         interfaceCallback = null
     }
 
-    // Este método nos permite actualizar el UI con el inventario recibido, al igual de manejar las acciones de Drag and Drop y el swipe delete.
+    // Este método nos permite actualizar la UI con el inventario recibido, al igual de manejar las acciones de Drag and Drop y el swipe delete.
     private fun updateUI() {
         val inventary = thingTableViewModel.inventory
         adapter = ThingAdapter(inventary)
@@ -166,7 +166,7 @@ class ThingsTableFragment: Fragment() {
             val builder = AlertDialog.Builder(activity)
             builder.setTitle("¡Atención!")
             builder.setMessage("¿Desea eliminar esta posesión?")
-            builder.setOnDismissListener { // Si cierra el Dialog, dando el botón de back de teléfono o dando tap fuera del mismo, actualizará la vista.
+            builder.setOnDismissListener { // Si cierra el Dialog, dando tap fuera del mismo o dando al botón de back del teléfono, actualizará la vista.
                 notifyDataSetChanged()
             }
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.

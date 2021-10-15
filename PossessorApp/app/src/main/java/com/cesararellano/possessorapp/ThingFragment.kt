@@ -95,14 +95,14 @@ class ThingFragment : Fragment() {
         dateLabel = view.findViewById(R.id.dateLabel)
         modifyDateButton = view.findViewById(R.id.modifyDateButton)
 
-        // Seteamos los valores de thing para que sean pintados en pantalla.s
+        // Seteamos los valores de thing para que sean pintados en pantalla.
         nameField.setText( thing.thingName )
         priceField.setText( thing.pesosValue.toString() )
         serialNumberField.setText( thing.serialNumber )
         dateLabel.text = thing.creationDate
 
         modifyDateButton.setOnClickListener {
-            // Se obtiene (año, mes y día) actual como fecha inicial del DatePickerDialog
+            // Se obtiene año, mes y día actual como fecha inicial del DatePickerDialog.
             val formatDate = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() )
             val splitDate = formatDate.split("-")
             val year = splitDate[2].toInt()

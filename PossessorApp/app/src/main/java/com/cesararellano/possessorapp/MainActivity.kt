@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
     }
 
     // Este método es implementado por la interfaz ThingTableInterface, esta recibe la posesión (cosa) seleccionada por el usuario
-    // este muestra un toast del nombre de la cosa seleccionada y con este objeto despliega el nuevo fragment con más detalles.
+    // este muestra un Toast del nombre de la cosa seleccionada y con este objeto despliega el nuevo fragment con más detalles.
     override fun onSelectedThing(thing: Thing) {
         Toast.makeText(this, "${ thing.thingName } fue seleccionada", Toast.LENGTH_SHORT).show()
         val fragment = ThingFragment.newInstance(thing)
