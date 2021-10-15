@@ -1,6 +1,7 @@
 package com.cesararellano.possessorapp
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "ThingsTableFragment"
 class ThingsTableFragment: Fragment() {
@@ -46,6 +48,31 @@ class ThingsTableFragment: Fragment() {
         val inventary = thingTableViewModel.inventory
         adapter = ThingAdapter(inventary)
         thingRecyclerView.adapter = adapter
+
+        val swipegestures = object : RecyclerViewGestures() { //  Genero los listeners para cuando se detecte el swipe del usuario
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if(direction == ItemTouchHelper.LEFT) {
+                    adapter?.deleteItem(viewHolder.absoluteAdapterPosition) // Si se hace swipe hacia la izquierda, entonces elimino el item
+                }
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                // Al moverse verticalmente, se mueve la posicion del item seleccionado
+                val fromPosition = viewHolder.absoluteAdapterPosition
+                val toPosition = target.absoluteAdapterPosition
+
+                Collections.swap(inventary, fromPosition, toPosition)
+                adapter?.notifyItemMoved(fromPosition, toPosition)
+
+                return false
+            }
+        }
+        val touchHelper = ItemTouchHelper(swipegestures)
+        touchHelper.attachToRecyclerView(thingRecyclerView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,40 +89,7 @@ class ThingsTableFragment: Fragment() {
         thingRecyclerView = view.findViewById(R.id.thingRecyclerView)
         thingRecyclerView.layoutManager = LinearLayoutManager(context)
         updateUI()
-        val simpleCallback = object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END, 0) {
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val fromPosition = viewHolder.absoluteAdapterPosition // Start Position
-                val toPosition = target.absoluteAdapterPosition // end position
-                Collections.swap(thingTableViewModel.inventory, fromPosition, toPosition)
-                adapter!!.notifyItemChanged(fromPosition, toPosition)
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                when(direction) {
-                    ItemTouchHelper.LEFT -> {
-                        println(viewHolder.absoluteAdapterPosition)
-                        thingTableViewModel.deleteThing(viewHolder.absoluteAdapterPosition)
-                        adapter!!.notifyItemChanged(viewHolder.absoluteAdapterPosition)
-                    }
-                }
-            }
-
-        }
-        val itemTouchHelper = ItemTouchHelper(simpleCallback)
-        itemTouchHelper.attachToRecyclerView(thingRecyclerView)
         return view
-    }
-
-    companion object {
-        fun newInstance():ThingsTableFragment {
-            return ThingsTableFragment()
-        }
     }
 
     private inner class ThingHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
@@ -142,7 +136,7 @@ class ThingsTableFragment: Fragment() {
         }
     }
 
-    private inner class ThingAdapter(var inventary: List<Thing>):RecyclerView.Adapter<ThingHolder>() {
+    private inner class ThingAdapter(var inventary: ArrayList<Thing>):RecyclerView.Adapter<ThingHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThingHolder {
             val holder = layoutInflater.inflate(R.layout.thing_layout,parent,false)
             return ThingHolder(holder)
@@ -154,6 +148,26 @@ class ThingsTableFragment: Fragment() {
 
         override fun onBindViewHolder(holder: ThingHolder, position: Int) {
             holder.binding(inventary[position])
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun deleteItem(position: Int) { // Funcion para eliminar un item
+            val builder = AlertDialog.Builder(activity) // Genero al alert para confirmar que se quiere eliminar el item
+            builder.setTitle("¡Atención!")
+            builder.setMessage("¿Desea eliminar esta posesión?")
+            builder.setPositiveButton("Confirmar") { dialog, _ -> // En caso de que la respuesta sea positiva, eliminamos el item
+                inventary.removeAt(position)
+                notifyDataSetChanged()
+                dialog.cancel()
+            }
+
+            builder.setNegativeButton("Cancelar") { dialog, _ -> // En caso negativo, se cierra el dialogo
+                notifyDataSetChanged()
+                dialog.cancel()
+            }
+
+            val alert: AlertDialog = builder.create()
+            alert.show() // Muestro el alert
         }
     }
 

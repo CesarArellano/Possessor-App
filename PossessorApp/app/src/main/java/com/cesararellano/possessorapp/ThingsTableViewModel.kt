@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import java.util.*
 
 class ThingsTableViewModel: ViewModel() {
-    val inventory = mutableListOf<Thing>()
+    val inventory = ArrayList<Thing>()
     private val names = arrayOf("Teléfono", "Pan", "Playera")
     private val adjectives = arrayOf("Gris", "Suave", "Cómoda")
 
@@ -18,9 +18,5 @@ class ThingsTableViewModel: ViewModel() {
             thing.pesosValue = randomPrice
             inventory += thing
         }
-    }
-
-    fun deleteThing(position: Int) {
-        inventory.removeAt(position)
     }
 }
