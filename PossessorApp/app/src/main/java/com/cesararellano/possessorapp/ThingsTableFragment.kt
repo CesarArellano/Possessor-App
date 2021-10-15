@@ -12,14 +12,17 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 private const val TAG = "ThingsTableFragment"
 class ThingsTableFragment: Fragment() {
-    private lateinit var  thingRecyclerView: RecyclerView
+    private lateinit var thingRecyclerView: RecyclerView
     private var adapter: ThingAdapter? = null
     private var interfaceCallback:ThingTableInterface? = null
+
 
     private val thingTableViewModel: ThingsTableViewModel by lazy {
         ViewModelProvider(this).get(ThingsTableViewModel::class.java)
@@ -59,6 +62,33 @@ class ThingsTableFragment: Fragment() {
         thingRecyclerView = view.findViewById(R.id.thingRecyclerView)
         thingRecyclerView.layoutManager = LinearLayoutManager(context)
         updateUI()
+        val simpleCallback = object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END, 0) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPosition = viewHolder.absoluteAdapterPosition // Start Position
+                val toPosition = target.absoluteAdapterPosition // end position
+                Collections.swap(thingTableViewModel.inventory, fromPosition, toPosition)
+                adapter!!.notifyItemChanged(fromPosition, toPosition)
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                when(direction) {
+                    ItemTouchHelper.LEFT -> {
+                        println(viewHolder.absoluteAdapterPosition)
+                        thingTableViewModel.deleteThing(viewHolder.absoluteAdapterPosition)
+                        adapter!!.notifyItemChanged(viewHolder.absoluteAdapterPosition)
+                    }
+                }
+            }
+
+        }
+        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        itemTouchHelper.attachToRecyclerView(thingRecyclerView)
         return view
     }
 
@@ -126,4 +156,5 @@ class ThingsTableFragment: Fragment() {
             holder.binding(inventary[position])
         }
     }
+
 }

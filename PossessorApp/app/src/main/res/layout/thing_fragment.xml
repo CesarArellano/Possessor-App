@@ -26,21 +26,21 @@
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="@string/nameLabel"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/priceEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:maxLength="4"
+        android:digits="0123456789"
         android:hint="@string/priceLabel"
         android:importantForAutofill="no"
         android:inputType="number|textVisiblePassword"
-        android:digits="0123456789"
+        android:maxLength="4"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/nameEditText" />
@@ -83,11 +83,23 @@
         android:id="@+id/dateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="44dp"
         android:text="@string/dateLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/modifyDateButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serialNumberEditText" />
+
+    <Button
+        android:id="@+id/modifyDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/modifyDateButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dateLabel"
         app:layout_constraintTop_toBottomOf="@+id/serialNumberEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

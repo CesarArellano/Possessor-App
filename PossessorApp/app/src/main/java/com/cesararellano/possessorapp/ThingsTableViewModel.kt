@@ -19,4 +19,8 @@ class ThingsTableViewModel: ViewModel() {
             inventory += thing
         }
     }
+
+    fun deleteThing(position: Int) {
+        inventory.removeAt(position)
+    }
 }

@@ -1,6 +1,6 @@
 package com.cesararellano.possessorapp
 
-import android.content.Context
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ThingFragment : Fragment() {
 
@@ -20,6 +22,7 @@ class ThingFragment : Fragment() {
     private lateinit var priceField: EditText
     private lateinit var serialNumberField: EditText
     private lateinit var dateLabel: TextView
+    private lateinit var modifyDateButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,13 +83,37 @@ class ThingFragment : Fragment() {
         priceField = view.findViewById(R.id.priceEditText)
         serialNumberField = view.findViewById(R.id.serialNumberEditText)
         dateLabel = view.findViewById(R.id.dateLabel)
+        modifyDateButton = view.findViewById(R.id.modifyDateButton)
 
         nameField.setText( thing.thingName )
         priceField.setText( thing.pesosValue.toString() )
         serialNumberField.setText( thing.serialNumber )
-        dateLabel.text = thing.creationDate.toString()
+        dateLabel.text = thing.creationDate
+
+        modifyDateButton.setOnClickListener {
+            // Se obtiene (año, mes y día) actual como fecha inicial del DatePickerDialog
+            val formatDate = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() )
+            val splitDate = formatDate.split("-")
+            val year = splitDate[2].toInt()
+            val month = splitDate[1].toInt()
+            val day = splitDate[0].toInt()
+            showDatePickerDialog(year, month, day)
+        }
 
         return view
+    }
+
+    private fun showDatePickerDialog(year: Int, month: Int, day: Int) {
+        val datePickerDialog = activity?.let { it1 ->
+            DatePickerDialog(it1, { _, yearN, monthOfYear, dayOfMonth ->
+                val newDate = "${ dayOfMonth }-${ monthOfYear + 1 }-${ yearN }"
+                dateLabel.text = newDate
+                thing.creationDate = newDate
+            }, year, month, day)
+        }
+
+        datePickerDialog?.datePicker?.maxDate = Date().time
+        datePickerDialog?.show()
     }
 
     companion object {
@@ -98,10 +125,5 @@ class ThingFragment : Fragment() {
                 arguments = args
             }
         }
-    }
-
-    private fun View.hideKeyboard() {
-        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }

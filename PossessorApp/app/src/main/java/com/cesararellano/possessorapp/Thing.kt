@@ -2,20 +2,21 @@ package com.cesararellano.possessorapp
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Thing(): Parcelable {
     var thingName: String = ""
     var pesosValue: Int = 0
     var serialNumber: String = UUID.randomUUID().toString().substring(0,6)
-    var creationDate: Date = Date()
+    var creationDate: String = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() )
 
     // Deserealización
     constructor(parcel: Parcel) : this() {
         thingName = parcel.readString().toString()
         pesosValue = parcel.readInt()
         serialNumber = parcel.readString().toString()
-        creationDate = parcel.readSerializable() as Date
+        creationDate = parcel.readString().toString()
     }
 
     // Serializar
@@ -27,7 +28,7 @@ class Thing(): Parcelable {
         dest.writeString(thingName)
         dest.writeInt(pesosValue)
         dest.writeString(serialNumber)
-        dest.writeSerializable(creationDate)
+        dest.writeString(creationDate)
     }
 
     companion object CREATOR : Parcelable.Creator<Thing> {
