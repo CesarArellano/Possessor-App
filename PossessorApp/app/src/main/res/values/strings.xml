@@ -4,8 +4,8 @@
     <string name="priceLabel">Precio</string>
     <string name="serialLabel">No. de Serie</string>
     <string name="dateLabel">Fecha</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="serialNumberLabel">Número de serie</string>
     <string name="modifyDateButton">Modificar fecha</string>
+    <string name="newThingItem">Nueva cosa</string>
 </resources>

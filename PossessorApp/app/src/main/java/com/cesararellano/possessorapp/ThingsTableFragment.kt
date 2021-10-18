@@ -5,9 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -80,6 +78,11 @@ class ThingsTableFragment: Fragment() {
         // Se adjunta el RecyclerView al touchHelper.
         val touchHelper = ItemTouchHelper(swipegestures)
         touchHelper.attachToRecyclerView(thingRecyclerView)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -185,4 +188,21 @@ class ThingsTableFragment: Fragment() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_thing_table, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when(item.itemId) {
+            R.id.newThingItem -> {
+                val newThing = Thing()
+                thingTableViewModel.addNewThing(newThing)
+                interfaceCallback?.onSelectedThing(newThing)
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
 }
