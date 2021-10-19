@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -79,6 +80,9 @@ class ThingFragment : Fragment() {
         nameField.addTextChangedListener(textObservable)
         priceField.addTextChangedListener(textObservable)
         serialNumberField.addTextChangedListener(textObservable)
+
+        val appbar = activity as AppCompatActivity
+        appbar.supportActionBar?.title = "Detalle cosa"
 
     }
 

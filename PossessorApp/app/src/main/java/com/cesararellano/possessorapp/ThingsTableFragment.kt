@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -78,6 +79,12 @@ class ThingsTableFragment: Fragment() {
         // Se adjunta el RecyclerView al touchHelper.
         val touchHelper = ItemTouchHelper(swipegestures)
         touchHelper.attachToRecyclerView(thingRecyclerView)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val appbar = activity as AppCompatActivity
+        appbar.supportActionBar?.title = "Possesor App"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

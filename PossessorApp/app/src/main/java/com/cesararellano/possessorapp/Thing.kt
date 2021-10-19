@@ -8,7 +8,7 @@ import java.util.*
 // Esta clase describe principalmente los atributos que puede tener una cosa, sin embargo también esta implementa la interfaz Parcelable
 // esta interfaz nos ayudará a poder serializar y deserializar la info entre fragments.
 class Thing(): Parcelable {
-    var thingName: String = ""
+    var thingName: String = "Nueva Cosa"
     var pesosValue: Int = 0
     var serialNumber: String = UUID.randomUUID().toString().substring(0, 8) // Se limita a 8 dígitos el UUID random
     var creationDate: String = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() ) // Con esta instrucción formateamos la fecha de la siguiente forma "día-mes-año".
