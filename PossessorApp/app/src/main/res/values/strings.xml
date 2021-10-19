@@ -8,4 +8,6 @@
     <string name="serialNumberLabel">Número de serie</string>
     <string name="modifyDateButton">Modificar fecha</string>
     <string name="newThingItem">Nueva cosa</string>
+    <string name="thingImage">Imagen cosa</string>
+    <string name="cameraButton">Botón cámara</string>
 </resources>

@@ -1,18 +1,18 @@
 package com.cesararellano.possessorapp
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,6 +26,8 @@ class ThingFragment : Fragment() {
     private lateinit var serialNumberField: EditText
     private lateinit var dateLabel: TextView
     private lateinit var modifyDateButton: Button
+    private lateinit var viewToPhoto: ImageView
+    private lateinit var cameraButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +100,8 @@ class ThingFragment : Fragment() {
         serialNumberField = view.findViewById(R.id.serialNumberEditText)
         dateLabel = view.findViewById(R.id.dateLabel)
         modifyDateButton = view.findViewById(R.id.modifyDateButton)
+        viewToPhoto = view.findViewById(R.id.thingImage)
+        cameraButton = view.findViewById(R.id.imageButton)
 
         // Seteamos los valores de thing para que sean pintados en pantalla.
         nameField.setText( thing.thingName )
@@ -113,6 +117,17 @@ class ThingFragment : Fragment() {
             val month = splitDate[1].toInt()
             val day = splitDate[0].toInt()
             showDatePickerDialog(year, month, day) // Crea el DatePickerDialog y lo muestra.
+        }
+
+        cameraButton.apply {
+            setOnClickListener {
+                val takePhotoIntent =  Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try {
+                    startActivity(takePhotoIntent)
+                } catch (e: Exception) {
+
+                }
+            }
         }
 
         return view
