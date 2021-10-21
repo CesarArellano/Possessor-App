@@ -1,21 +1,30 @@
 package com.cesararellano.possessorapp
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import java.io.File
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val TAG = "ThingFragment"
 class ThingFragment : Fragment() {
     // Variable de referencia a la cosa, que recibe de ThingTableFragment.
     private lateinit var thing: Thing
@@ -28,6 +37,15 @@ class ThingFragment : Fragment() {
     private lateinit var modifyDateButton: Button
     private lateinit var viewToPhoto: ImageView
     private lateinit var cameraButton: ImageButton
+    private lateinit var photoFile: File
+    private var cameraResp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if( result.resultCode == Activity.RESULT_OK ) {
+            val data = result.data
+            // viewToPhoto.setImageBitmap(data?.extras?.get("data") as Bitmap)
+            viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +75,6 @@ class ThingFragment : Fragment() {
                             when {
                                 s.isEmpty() -> {
                                     thing.pesosValue = 0
-                                }
-                                s.toString().toInt() > 1000 -> { // Si el usuario ingresa un número mayor a 1000, el valor máximo asignado será 1000.
-                                    thing.pesosValue = 1000
                                 }
                                 else -> {
                                     thing.pesosValue = s.toString().toInt()
@@ -102,7 +117,8 @@ class ThingFragment : Fragment() {
         modifyDateButton = view.findViewById(R.id.modifyDateButton)
         viewToPhoto = view.findViewById(R.id.thingImage)
         cameraButton = view.findViewById(R.id.imageButton)
-
+        photoFile = File( context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${ thing.thingId }.jpg")
+        viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
         // Seteamos los valores de thing para que sean pintados en pantalla.
         nameField.setText( thing.thingName )
         priceField.setText( thing.pesosValue.toString() )
@@ -122,15 +138,24 @@ class ThingFragment : Fragment() {
         cameraButton.apply {
             setOnClickListener {
                 val takePhotoIntent =  Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                try {
-                    startActivity(takePhotoIntent)
-                } catch (e: Exception) {
+                photoFile = getPhotoFile("${ thing.thingId }.jpg")
+                val fileProvider = FileProvider.getUriForFile( context, "${ BuildConfig.APPLICATION_ID }.fileprovider", photoFile)
+                takePhotoIntent.putExtra( MediaStore.EXTRA_OUTPUT, fileProvider )
 
+                try {
+                    cameraResp.launch(takePhotoIntent)
+                } catch (e: Exception) {
+                    Log.d(TAG, "No se encontró la cámara.")
                 }
             }
         }
 
         return view
+    }
+
+    private fun getPhotoFile(filename: String): File {
+        val photoPath = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File(photoPath, filename)
     }
 
     private fun showDatePickerDialog(year: Int, month: Int, day: Int) {

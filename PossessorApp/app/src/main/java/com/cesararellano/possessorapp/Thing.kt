@@ -12,6 +12,7 @@ class Thing(): Parcelable {
     var pesosValue: Int = 0
     var serialNumber: String = UUID.randomUUID().toString().substring(0, 8) // Se limita a 8 dígitos el UUID random
     var creationDate: String = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() ) // Con esta instrucción formateamos la fecha de la siguiente forma "día-mes-año".
+    var thingId = UUID.randomUUID().toString().substring(0,6)
 
     // Deserializar data
     constructor(parcel: Parcel) : this() {
@@ -19,6 +20,7 @@ class Thing(): Parcelable {
         pesosValue = parcel.readInt()
         serialNumber = parcel.readString().toString()
         creationDate = parcel.readString().toString()
+        thingId = parcel.readString().toString()
     }
 
     override fun describeContents(): Int {
@@ -31,6 +33,7 @@ class Thing(): Parcelable {
         dest.writeInt(pesosValue)
         dest.writeString(serialNumber)
         dest.writeString(creationDate)
+        dest.writeString(thingId)
     }
 
     // Este companion object creará un objeto Thing a partir de un Parcel.
