@@ -83,7 +83,7 @@
         android:id="@+id/dateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="34dp"
         android:text="@string/dateLabel"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/modifyDateButton"
