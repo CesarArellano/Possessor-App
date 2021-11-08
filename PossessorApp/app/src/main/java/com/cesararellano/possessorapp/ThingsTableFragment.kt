@@ -3,12 +3,15 @@ package com.cesararellano.possessorapp
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -178,16 +181,27 @@ class ThingsTableFragment: Fragment() {
 
         private lateinit var thing: Thing
 
+        val photoThumbnail: ImageView = itemView.findViewById(R.id.photoThumbnail)
         val nameTextView: TextView = itemView.findViewById(R.id.nameLabel)
         val priceTextView: TextView = itemView.findViewById(R.id.priceLabel)
         val serialNumberTextView: TextView = itemView.findViewById(R.id.serialNumberLabel)
+
         // Seteamos los valores de la cosa en la tabla ( item del RecyclerView ).
         @SuppressLint("SetTextI18n")
         fun binding(thing:Thing) {
             this.thing = thing
-            nameTextView.text = this.thing.thingName
+
+            val photoFile = File( context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${ thing.thingId }.jpg")
+
+            if( photoFile.exists() ) {
+                photoThumbnail.setImageBitmap(BitmapFactory.decodeFile(photoFile.absolutePath))
+            } else {
+                photoThumbnail.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.no_image) )
+            }
+
+            nameTextView.text = thing.thingName
             priceTextView.text = "$${ thing.pesosValue }"
-            serialNumberTextView.text = this.thing.serialNumber
+            serialNumberTextView.text = thing.serialNumber
         }
 
         init {
@@ -243,7 +257,6 @@ class ThingsTableFragment: Fragment() {
             val alert: AlertDialog = builder.create()
             alert.show() // Despliega en pantalla el AlertDialog.
         }
-
         private fun deletePhotoFile(filename: String) {
             val photoPath = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val photoFile = File(photoPath, filename)
