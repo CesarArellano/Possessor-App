@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -226,6 +228,7 @@ class ThingsTableFragment: Fragment() {
                 notifyDataSetChanged()
             }
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
+                deletePhotoFile("${ inventary[position].thingId }.jpg")
                 inventary.removeAt(position)
                 updateFooter()
                 notifyDataSetChanged()
@@ -239,6 +242,13 @@ class ThingsTableFragment: Fragment() {
 
             val alert: AlertDialog = builder.create()
             alert.show() // Despliega en pantalla el AlertDialog.
+        }
+
+        private fun deletePhotoFile(filename: String) {
+            val photoPath = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val photoFile = File(photoPath, filename)
+
+            if( photoFile.exists() ) photoFile.delete()
         }
     }
 

@@ -95,7 +95,7 @@
         android:id="@+id/modifyDateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="@string/modifyDateButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -104,25 +104,38 @@
 
     <ImageView
         android:id="@+id/thingImage"
-        android:layout_width="182dp"
-        android:layout_height="199dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/thingImage"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/modifyDateButton"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/modifyDateButton" />
 
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
+        android:padding="12dp"
         android:contentDescription="@string/cameraButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deleteImageButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/thingImage"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:srcCompat="@drawable/ic_add_a_photo"
+        android:backgroundTint="@color/green_light" />
+
+    <Button
+        android:id="@+id/deleteImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/deleteImageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toTopOf="@+id/imageButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

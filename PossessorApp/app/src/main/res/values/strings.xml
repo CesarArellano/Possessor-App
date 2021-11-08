@@ -7,10 +7,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="serialNumberLabel">Número de serie</string>
     <string name="modifyDateButton">Modificar fecha</string>
-    <string name="newThingItem">Nueva cosa</string>
+    <string name="newThingItem">Agregar nueva cosa</string>
     <string name="thingImage">Imagen cosa</string>
     <string name="cameraButton">Botón cámara</string>
     <string name="sectionLabel">Sección</string>
     <string name="numberOfThings">Número de cosas: 0</string>
     <string name="thingPriceSum">Suma de precios: $0</string>
+    <string name="deleteImageButton">Eliminar imagen</string>
 </resources>

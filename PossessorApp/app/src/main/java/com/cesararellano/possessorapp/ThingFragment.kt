@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
 import java.lang.Exception
@@ -37,12 +38,14 @@ class ThingFragment : Fragment() {
     private lateinit var modifyDateButton: Button
     private lateinit var viewToPhoto: ImageView
     private lateinit var cameraButton: ImageButton
+    private lateinit var deleteImageButton: Button
     private lateinit var photoFile: File
     private var cameraResp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if( result.resultCode == Activity.RESULT_OK ) {
             // val data = result.data
             // viewToPhoto.setImageBitmap(data?.extras?.get("data") as Bitmap)
             viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
+            deleteImageButton.isEnabled = true
         }
     }
 
@@ -126,8 +129,14 @@ class ThingFragment : Fragment() {
         modifyDateButton = view.findViewById(R.id.modifyDateButton)
         viewToPhoto = view.findViewById(R.id.thingImage)
         cameraButton = view.findViewById(R.id.imageButton)
+        deleteImageButton = view.findViewById(R.id.deleteImageButton)
         photoFile = File( context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${ thing.thingId }.jpg")
-        viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
+
+        if( photoFile.exists() ) {
+            viewToPhoto.setImageBitmap(BitmapFactory.decodeFile(photoFile.absolutePath))
+        } else {
+            deleteImageButton.isEnabled = false
+        }
         // Seteamos los valores de thing para que sean pintados en pantalla.
         nameField.setText( thing.thingName )
         priceField.setText( thing.pesosValue.toString() )
@@ -157,6 +166,13 @@ class ThingFragment : Fragment() {
                     Log.d(TAG, "No se encontró la cámara.")
                 }
             }
+        }
+
+        deleteImageButton.setOnClickListener {
+            photoFile = getPhotoFile("${ thing.thingId }.jpg")
+            photoFile.delete()
+            viewToPhoto.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.no_image) )
+            deleteImageButton.isEnabled = false
         }
 
         return view
