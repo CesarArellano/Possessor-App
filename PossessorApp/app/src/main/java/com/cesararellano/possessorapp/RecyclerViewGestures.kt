@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.graphics.Color
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-// Implementamos la clase abstracta que hereda la clase ItemTouchHelper, dicha clase será la que gestione los gestos que aplique el usuario a los items del RecyclerView.
+// Implementamos la clase abstracta que hereda la clase ItemTouchHelper, dicha clase será la que gestione los gestos que haga el usuario a los items del RecyclerView.
 abstract class RecyclerViewGestures : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
     ItemTouchHelper.LEFT) {
 

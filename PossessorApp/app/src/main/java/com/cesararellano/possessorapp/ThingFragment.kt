@@ -1,6 +1,5 @@
 package com.cesararellano.possessorapp
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -43,10 +42,8 @@ class ThingFragment : Fragment() {
     private lateinit var photoFile: File
     private var cameraResp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if( result.resultCode == Activity.RESULT_OK ) {
-            // val data = result.data
-            // viewToPhoto.setImageBitmap(data?.extras?.get("data") as Bitmap)
             viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
-            deleteImageButton.isEnabled = true
+            deleteImageButton.isEnabled = true // Habilitamos el botón de eliminar imagen.
         }
     }
 
@@ -60,11 +57,13 @@ class ThingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // onBackPressedCallback nos ayudará a habilitar o deshabilitar la opción de poder regresar a ThingTableFragment dependiendo si el campo de nombre está vacío o no.
         val onBackPressedCallback = object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
             }
         }
 
+        // Añadimos el callback al dispatcher del onBackPressed, para que esté pendiente de los cambios.
         requireActivity().onBackPressedDispatcher.addCallback( viewLifecycleOwner, onBackPressedCallback )
 
         val textObservable = object : TextWatcher {
@@ -75,10 +74,10 @@ class ThingFragment : Fragment() {
                 when {
                     s.hashCode() == nameField.text.hashCode() -> {
                         if( s.toString().isNotEmpty() ) {
-                            onBackPressedCallback.isEnabled = false
+                            onBackPressedCallback.isEnabled = false // Habilitamos el poder regresar al anterior Fragment.
                             thing.thingName = s.toString()
                         } else {
-                            onBackPressedCallback.isEnabled = true
+                            onBackPressedCallback.isEnabled = true // Deshabilitamos el poder regresar al anterior Fragment.
                             Toast.makeText(requireContext(), "Este campo no puede estar vacío", Toast.LENGTH_LONG).show()
                         }
                     }
@@ -111,6 +110,7 @@ class ThingFragment : Fragment() {
         priceField.addTextChangedListener(textObservable)
         serialNumberField.addTextChangedListener(textObservable)
 
+        // Se cambia el título del actionBar
         val appbar = activity as AppCompatActivity
         appbar.supportActionBar?.title = "Detalle cosa"
 
@@ -131,6 +131,8 @@ class ThingFragment : Fragment() {
         viewToPhoto = view.findViewById(R.id.thingImage)
         cameraButton = view.findViewById(R.id.imageButton)
         deleteImageButton = view.findViewById(R.id.deleteImageButton)
+
+        // Validación para la foto de la cosa, si existe se pone en el ImageView, si no sólo deshabilitamos el botón de eliminar imagen.
         photoFile = File( context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${ thing.thingId }.jpg")
 
         if( photoFile.exists() ) {
@@ -156,11 +158,12 @@ class ThingFragment : Fragment() {
 
         cameraButton.apply {
             setOnClickListener {
+                // Realizamos la captura de la cosa y creamos la instancia del archivo para la nueva imagen.
                 val takePhotoIntent =  Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 photoFile = getPhotoFile("${ thing.thingId }.jpg")
                 val fileProvider = FileProvider.getUriForFile( context, "${ BuildConfig.APPLICATION_ID }.fileprovider", photoFile)
                 takePhotoIntent.putExtra( MediaStore.EXTRA_OUTPUT, fileProvider )
-
+                // Hacemos launch para lanzar el Intent de la cámara.
                 try {
                     cameraResp.launch(takePhotoIntent)
                 } catch (e: Exception) {
@@ -170,6 +173,7 @@ class ThingFragment : Fragment() {
         }
 
         deleteImageButton.setOnClickListener {
+            // Se elimina la imagen del storage, se establece el imageView con una imagen ilustrativa y deshabilitamos el botón.
             photoFile = getPhotoFile("${ thing.thingId }.jpg")
             photoFile.delete()
             viewToPhoto.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.no_image) )
@@ -179,11 +183,13 @@ class ThingFragment : Fragment() {
         return view
     }
 
+    // Con esta función obtenemos un File de la foto de la cosa seleccionada.
     private fun getPhotoFile(filename: String): File {
         val photoPath = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File(photoPath, filename)
     }
 
+    // Configuramos y mostramos el Date Picker Dialog.
     private fun showDatePickerDialog(year: Int, month: Int, day: Int) {
         val datePickerDialog = activity?.let { it1 ->
             DatePickerDialog(it1, { _, yearN, monthOfYear, dayOfMonth ->

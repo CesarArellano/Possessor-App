@@ -12,7 +12,7 @@ class Thing(): Parcelable {
     var pesosValue: Int = 0
     var serialNumber: String = UUID.randomUUID().toString().substring(0, 8) // Se limita a 8 dígitos el UUID random
     var creationDate: String = SimpleDateFormat( "dd-MM-yyyy", Locale.getDefault() ).format( Date() ) // Con esta instrucción formateamos la fecha de la siguiente forma "día-mes-año".
-    var originalCreationDate: Date = Date()
+    var originalCreationDate: Date = Date() // El tener este parámetro de tipo Date, nos ayudará a poder ordenarlos de manera ascendente o descendente los elementos.
     var thingId = UUID.randomUUID().toString().substring(0,6)
 
     // Deserializar data

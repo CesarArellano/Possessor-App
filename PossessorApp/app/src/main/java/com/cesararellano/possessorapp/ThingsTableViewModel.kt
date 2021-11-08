@@ -33,7 +33,7 @@ class ThingsTableViewModel: ViewModel() {
     fun getTotalThings(): Int {
         var totalThings = 0
         for(sections in listOfSections){
-            totalThings += sections.list.size
+            totalThings += sections.sectionList.size
         }
         return totalThings
     }
@@ -41,7 +41,7 @@ class ThingsTableViewModel: ViewModel() {
     fun getTotalPriceSum(): Int {
         var totalPrices = 0
         for(sections in listOfSections) {
-            for(thing in sections.list) {
+            for(thing in sections.sectionList) {
                 totalPrices+= thing.pesosValue
             }
         }
@@ -49,8 +49,8 @@ class ThingsTableViewModel: ViewModel() {
         return totalPrices
     }
 
-    fun getThingPriceSumBySection(sectionList: ArrayList<Thing>):Int {
-        var priceCounterBySection: Int = 0
+    fun getThingPriceSumBySection(sectionList: ArrayList<Thing>): Int {
+        var priceCounterBySection = 0
         for(thing in sectionList) {
             priceCounterBySection += thing.pesosValue
         }
@@ -59,16 +59,16 @@ class ThingsTableViewModel: ViewModel() {
 
     fun addNewThing(thing: Thing) {
         val index = getIndexOfSection(thing.pesosValue)
-        listOfSections[index].list.add(thing)
+        listOfSections[index].sectionList.add(thing)
     }
 
-    fun reorderArrays(thing: Thing, prevSectionIndex: Int) {
-        val newIndex = getIndexOfSection(thing.pesosValue)
-        if(newIndex != prevSectionIndex) {
-            val filteredValues = listOfSections[prevSectionIndex].list.filter { it.pesosValue in priceRanges[prevSectionIndex] }
-            listOfSections[prevSectionIndex].list.clear()
-            listOfSections[prevSectionIndex].list.addAll(filteredValues)
-            listOfSections[newIndex].list.add(thing)
+    fun orderSectionList(thing: Thing, prevSectionIndex: Int) {
+        val newPosition = getIndexOfSection(thing.pesosValue)
+        if( newPosition != prevSectionIndex ) {
+            val filteredValues = listOfSections[prevSectionIndex].sectionList.filter { it.pesosValue in priceRanges[prevSectionIndex] }
+            listOfSections[prevSectionIndex].sectionList.clear()
+            listOfSections[prevSectionIndex].sectionList.addAll(filteredValues)
+            listOfSections[newPosition].sectionList.add(thing)
         }
     }
 

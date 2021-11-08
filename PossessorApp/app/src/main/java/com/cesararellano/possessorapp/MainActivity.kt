@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterface {
+    // Declaramos dichas propiedades para saber qué cosa fue seleccionada y tras regresar back al ThingTableFragment, el poder ordernarlo en la posición adecuada de las secciones.
     private var thingSelected = Thing()
     private var thingsTableViewModel: ThingsTableViewModel? = null
     private var currentThingPosition: Int = 0
@@ -25,11 +26,11 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
 
     // Este método es implementado por la interfaz ThingTableInterface, esta recibe la posesión (cosa) seleccionada por el usuario
     // este muestra un Toast del nombre de la cosa seleccionada y con este objeto despliega el nuevo fragment con más detalles.
-    override fun onSelectedThing(thing: Thing, thingsTable: ThingsTableViewModel) {
+    override fun onSelectedThing(thing: Thing, thingTable: ThingsTableViewModel) {
         Toast.makeText(this, "${ thing.thingName } fue seleccionada", Toast.LENGTH_SHORT).show()
         thingSelected = thing
-        thingsTableViewModel = thingsTable
-        currentThingPosition = thingsTable.getIndexOfSection( thing.pesosValue )
+        thingsTableViewModel = thingTable
+        currentThingPosition = thingTable.getIndexOfSection( thing.pesosValue )
         val fragment = ThingFragment.newInstance(thing)
         supportFragmentManager
             .beginTransaction()
@@ -38,8 +39,9 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
             .commit()
     }
 
+    // Tras regresar al ThingTableViewFragment, la tabla ordenada basado en la cosa seleccionada.
     override fun onBackPressed() {
-        thingsTableViewModel?.reorderArrays(thingSelected, currentThingPosition)
+        thingsTableViewModel?.orderSectionList(thingSelected, currentThingPosition)
         super.onBackPressed()
     }
 }

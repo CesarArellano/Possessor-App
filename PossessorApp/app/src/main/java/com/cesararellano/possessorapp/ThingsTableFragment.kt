@@ -115,25 +115,25 @@ class ThingsTableFragment: Fragment() {
             @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
             fun bind(section: Sections, backgroundColor: Int) {
 
-                sectionNameTV.text = section.section
-                numberOfThingsBySection.text = "Número de cosas: ${ section.list.size }"
-                thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.list) }"
+                sectionNameTV.text = section.sectionName
+                numberOfThingsBySection.text = "Número de cosas: ${ section.sectionList.size }"
+                thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.sectionList) }"
 
-                val thingAdapter = ThingAdapter(section.list)
+                val thingAdapter = ThingAdapter(section.sectionList)
                 thingsRecyclerView.layoutManager = LinearLayoutManager(context)
                 thingsRecyclerView.adapter = thingAdapter
                 thingsRecyclerView.setBackgroundColor(backgroundColor)
 
-                orderByAlphaButton.isEnabled = section.list.size > 0
-                orderByDateButton.isEnabled = section.list.size > 0
+                orderByAlphaButton.isEnabled = section.sectionList.size > 0
+                orderByDateButton.isEnabled = section.sectionList.size > 0
 
                 orderByDateButton.setOnClickListener {
                     isSortByAscDate = if( isSortByAscDate ) {
-                        section.list.sortBy { it.originalCreationDate }
+                        section.sectionList.sortBy { it.originalCreationDate }
                         orderByDateLabel.text = "ASC"
                         false
                     } else {
-                        section.list.sortByDescending { it.originalCreationDate }
+                        section.sectionList.sortByDescending { it.originalCreationDate }
                         orderByDateLabel.text = "DESC"
                         true
                     }
@@ -143,11 +143,11 @@ class ThingsTableFragment: Fragment() {
                 orderByAlphaButton.setOnClickListener {
 
                     isSortByAscAlpha = if( isSortByAscAlpha ) {
-                        section.list.sortBy { it.thingName }
+                        section.sectionList.sortBy { it.thingName }
                         orderByAlphaLabel.text = "ASC"
                         false
                     } else {
-                        section.list.sortByDescending { it.thingName }
+                        section.sectionList.sortByDescending { it.thingName }
                         orderByAlphaLabel.text = "DESC"
                         true
                     }
@@ -174,7 +174,7 @@ class ThingsTableFragment: Fragment() {
                         val fromPosition = viewHolder.absoluteAdapterPosition
                         val toPosition = target.absoluteAdapterPosition
 
-                        Collections.swap(section.list, fromPosition, toPosition)
+                        Collections.swap(section.sectionList, fromPosition, toPosition)
                         thingAdapter.notifyItemMoved(fromPosition, toPosition)
 
                         return false
