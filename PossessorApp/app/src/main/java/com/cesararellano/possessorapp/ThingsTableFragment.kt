@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -101,20 +102,58 @@ class ThingsTableFragment: Fragment() {
 
         inner class DataViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             private val sectionNameTV: TextView = itemView.findViewById(R.id.section_title)
-            private val cosasRV: RecyclerView = itemView.findViewById(R.id.child_recycler_view)
+            private val thingsRecyclerView: RecyclerView = itemView.findViewById(R.id.child_recycler_view)
             private val numberOfThingsBySection: TextView = itemView.findViewById(R.id.numberOfThingsBySection)
             private val thingPriceSumBySection: TextView = itemView.findViewById(R.id.thingPriceSumBySection)
+            private val orderByAlphaButton: ImageButton = itemView.findViewById(R.id.orderByAlphaButton)
+            private val orderByAlphaLabel: TextView = itemView.findViewById(R.id.orderByAlphaLabel)
+            private val orderByDateButton: ImageButton = itemView.findViewById(R.id.orderByDateButton)
+            private val orderByDateLabel: TextView = itemView.findViewById(R.id.orderByDateLabel)
+            private var isSortByAscAlpha:Boolean = true
+            private var isSortByAscDate:Boolean = true
 
-
-            @SuppressLint("SetTextI18n")
+            @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
             fun bind(section: Sections, backgroundColor: Int) {
+
                 sectionNameTV.text = section.section
                 numberOfThingsBySection.text = "Número de cosas: ${ section.list.size }"
                 thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.list) }"
+
                 val thingAdapter = ThingAdapter(section.list)
-                cosasRV.layoutManager = LinearLayoutManager(context)
-                cosasRV.adapter = thingAdapter
-                cosasRV.setBackgroundColor(backgroundColor)
+                thingsRecyclerView.layoutManager = LinearLayoutManager(context)
+                thingsRecyclerView.adapter = thingAdapter
+                thingsRecyclerView.setBackgroundColor(backgroundColor)
+
+                orderByAlphaButton.isEnabled = section.list.size > 0
+                orderByDateButton.isEnabled = section.list.size > 0
+
+                orderByDateButton.setOnClickListener {
+                    isSortByAscDate = if( isSortByAscDate ) {
+                        section.list.sortBy { it.originalCreationDate }
+                        orderByDateLabel.text = "ASC"
+                        false
+                    } else {
+                        section.list.sortByDescending { it.originalCreationDate }
+                        orderByDateLabel.text = "DESC"
+                        true
+                    }
+                    notifyDataSetChanged()
+                }
+
+                orderByAlphaButton.setOnClickListener {
+
+                    isSortByAscAlpha = if( isSortByAscAlpha ) {
+                        section.list.sortBy { it.thingName }
+                        orderByAlphaLabel.text = "ASC"
+                        false
+                    } else {
+                        section.list.sortByDescending { it.thingName }
+                        orderByAlphaLabel.text = "DESC"
+                        true
+                    }
+                    notifyDataSetChanged()
+                }
+
                 // Se generan los listeners dependiendo del gesto del usuario, se utiliza la clase abstracta RecyclerViewGestures.
                 val swipegestures = object : RecyclerViewGestures() {
 
@@ -143,7 +182,7 @@ class ThingsTableFragment: Fragment() {
                 }
                 // Se adjunta el RecyclerView al touchHelper.
                 val touchHelper = ItemTouchHelper(swipegestures)
-                touchHelper.attachToRecyclerView(cosasRV)
+                touchHelper.attachToRecyclerView(thingsRecyclerView)
             }
 
         }

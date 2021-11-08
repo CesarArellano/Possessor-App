@@ -1,5 +1,6 @@
 package com.cesararellano.possessorapp
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -189,6 +190,7 @@ class ThingFragment : Fragment() {
                 val newDate = "${ dayOfMonth }-${ monthOfYear + 1 }-${ yearN }"
                 dateLabel.text = newDate
                 thing.creationDate = newDate
+                thing.originalCreationDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault() ).parse(newDate)!!
             }, year, month, day) // Se crea el DatePicker con la fecha actual y tras seleccionar una fecha le establecemos el formato a la misma, para almacenarla y pintarla en la vista.
         }
 

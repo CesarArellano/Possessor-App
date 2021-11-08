@@ -16,4 +16,5 @@
     <string name="totalThings">Total de cosas: 0</string>
     <string name="totalPriceSum">Suma total de precios: $0</string>
     <string name="deleteImageButton">Eliminar imagen</string>
+    <string name="orderByLabel">ASC</string>
 </resources>
