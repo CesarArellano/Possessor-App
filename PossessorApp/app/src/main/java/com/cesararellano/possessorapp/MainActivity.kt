@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
         Toast.makeText(this, "${ thing.thingName } fue seleccionada", Toast.LENGTH_SHORT).show()
         thingSelected = thing
         thingsTableViewModel = thingTable
-        currentThingPosition = thingTable.getIndexOfSection( thing.pesosValue )
+        currentThingPosition = thingTable.getSectionPosition( thing.pesosValue )
         val fragment = ThingFragment.newInstance(thing)
         supportFragmentManager
             .beginTransaction()
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterfac
             .commit()
     }
 
-    // Tras regresar al ThingTableViewFragment, la tabla ordenada basado en la cosa seleccionada.
+    // Tras regresar al ThingTableViewFragment, la tabla se ordena basado en la cosa seleccionada.
     override fun onBackPressed() {
         thingsTableViewModel?.orderSectionList(thingSelected, currentThingPosition)
         super.onBackPressed()

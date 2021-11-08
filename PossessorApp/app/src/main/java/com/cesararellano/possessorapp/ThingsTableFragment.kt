@@ -53,8 +53,8 @@ class ThingsTableFragment: Fragment() {
 
     // Este método nos permite actualizar la UI con el inventario recibido, al igual de manejar las acciones de Drag and Drop y el swipe delete.
     private fun updateUI() {
-        val inventary = thingTableViewModel.listOfSections
-        sectionsAdapter = SectionsAdapter(inventary)
+        val inventory = thingTableViewModel.inventory
+        sectionsAdapter = SectionsAdapter(inventory)
         sectionsRecyclerView.adapter = sectionsAdapter
     }
 
@@ -260,7 +260,7 @@ class ThingsTableFragment: Fragment() {
     }
 
     // Creamos el adapter, el cual nos ayuda a crear en general el RecyclerView.
-    private inner class ThingAdapter(var inventary: ArrayList<Thing>):RecyclerView.Adapter<ThingHolder>() {
+    private inner class ThingAdapter(var inventory: ArrayList<Thing>):RecyclerView.Adapter<ThingHolder>() {
 
         //Seteamos el layout del item
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThingHolder {
@@ -270,11 +270,11 @@ class ThingsTableFragment: Fragment() {
 
         // Seteamos el número de elementos que tendrá el Recycler View a través de la longitud de la lista del inventario.
         override fun getItemCount(): Int {
-            return inventary.size
+            return inventory.size
         }
 
         override fun onBindViewHolder(holder: ThingHolder, position: Int) {
-            holder.binding(inventary[position]) // Ligamos la posesión (cosa) con la función binding del ThingHolder.
+            holder.binding(inventory[position]) // Ligamos la posesión (cosa) con la función binding del ThingHolder.
         }
 
         // Función para eliminar el item al que se le hizo swipe
@@ -288,8 +288,8 @@ class ThingsTableFragment: Fragment() {
                 notifyDataSetChanged()
             }
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
-                deletePhotoFile("${ inventary[position].thingId }.jpg")
-                inventary.removeAt(position)
+                deletePhotoFile("${ inventory[position].thingId }.jpg")
+                inventory.removeAt(position)
                 updateFooter()
                 sectionsAdapter?.notifyDataSetChanged()
                 notifyDataSetChanged()
