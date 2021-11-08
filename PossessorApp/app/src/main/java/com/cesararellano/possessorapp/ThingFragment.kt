@@ -140,6 +140,7 @@ class ThingFragment : Fragment() {
         } else {
             deleteImageButton.isEnabled = false
         }
+
         // Seteamos los valores de thing para que sean pintados en pantalla.
         nameField.setText( thing.thingName )
         priceField.setText( thing.pesosValue.toString() )

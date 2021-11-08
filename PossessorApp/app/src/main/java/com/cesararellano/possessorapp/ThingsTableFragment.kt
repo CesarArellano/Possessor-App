@@ -246,6 +246,7 @@ class ThingsTableFragment: Fragment() {
         fun binding(thing:Thing) {
             this.thing = thing
 
+            // Validación para la foto de la cosa, si existe se pone en el ImageView, si no sólo mostramos una imagen tipo placeholder.
             val photoFile = File( context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${ thing.thingId }.jpg")
 
             if( photoFile.exists() ) {
@@ -301,9 +302,9 @@ class ThingsTableFragment: Fragment() {
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
                 deletePhotoFile("${ inventory[position].thingId }.jpg")
                 inventory.removeAt(position)
-                updateFooter()
-                sectionsAdapter?.notifyDataSetChanged()
-                notifyDataSetChanged()
+                updateFooter() // Actualizamos el pie de página
+                sectionsAdapter?.notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
+                notifyDataSetChanged() // Actualizamos el RecylerView de las cosas.
                 dialog.cancel()
             }
 
@@ -315,6 +316,8 @@ class ThingsTableFragment: Fragment() {
             val alert: AlertDialog = builder.create()
             alert.show() // Despliega en pantalla el AlertDialog.
         }
+
+        // Con esta función eliminamos la foto de la cosa.
         private fun deletePhotoFile(filename: String) {
             val photoPath = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val photoFile = File(photoPath, filename)
@@ -323,6 +326,7 @@ class ThingsTableFragment: Fragment() {
         }
     }
 
+    // Sobreescribimos onCreateOptionsMenu y onOptionsItemSelected para poder establecer y determinar las acciones del menú.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_thing_table, menu)
@@ -333,8 +337,8 @@ class ThingsTableFragment: Fragment() {
         when(item.itemId) {
             R.id.newThingItem -> {
                 val newThing = Thing()
-                thingTableViewModel.addNewThing(newThing)
-                interfaceCallback?.onSelectedThing(newThing, thingTableViewModel)
+                thingTableViewModel.addNewThing(newThing) // Añadiendo una cosa en el inventario.
+                interfaceCallback?.onSelectedThing(newThing, thingTableViewModel) // Ejecutamos la función de onSelectedThing
             }
         }
 
