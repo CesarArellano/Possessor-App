@@ -21,7 +21,8 @@ class ThingsTableFragment: Fragment() {
     // Propiedades para generar el RecyclerView.
     private lateinit var sectionsRecyclerView: RecyclerView
     private var sectionsAdapter: SectionsAdapter ? = null
-
+    private lateinit var numberOfThings: TextView
+    private lateinit var thingPriceSum: TextView
     private var interfaceCallback:ThingTableInterface? = null
     private val thingTableViewModel: ThingsTableViewModel by lazy {
         ViewModelProvider(this).get(ThingsTableViewModel::class.java) // Obtenemos los datos de ThingsTableViewModel
@@ -51,6 +52,19 @@ class ThingsTableFragment: Fragment() {
         sectionsRecyclerView.adapter = sectionsAdapter
     }
 
+    @SuppressLint("SetTextI18n")
+    fun updateFooter() {
+        val numberOfThingsViewModel = thingTableViewModel.getNumberOfThings()
+        val thingPriceSumViewModel: Int = thingTableViewModel.getThingPriceSum()
+        numberOfThings.text = "Número de cosas: $numberOfThingsViewModel"
+        thingPriceSum.text = "Suma de precios: $$thingPriceSumViewModel"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateFooter()
+    }
+
     override fun onStart() {
         super.onStart()
         val appbar = activity as AppCompatActivity
@@ -71,7 +85,10 @@ class ThingsTableFragment: Fragment() {
         val view = inflater.inflate(R.layout.thing_list_fragment, container, false)
         sectionsRecyclerView = view.findViewById(R.id.thingRecyclerView)
         sectionsRecyclerView.layoutManager = LinearLayoutManager(context)
+        numberOfThings = view.findViewById(R.id.numberOfThings)
+        thingPriceSum = view.findViewById(R.id.thingPriceSum)
         updateUI()
+        updateFooter()
         return view
     }
 
@@ -210,6 +227,7 @@ class ThingsTableFragment: Fragment() {
             }
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
                 inventary.removeAt(position)
+                updateFooter()
                 notifyDataSetChanged()
                 dialog.cancel()
             }

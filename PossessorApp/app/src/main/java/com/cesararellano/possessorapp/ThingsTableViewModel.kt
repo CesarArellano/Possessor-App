@@ -30,7 +30,7 @@ class ThingsTableViewModel: ViewModel() {
         }
     }
 
-    fun getTotalThings(): Int {
+    fun getNumberOfThings(): Int {
         var totalThings = 0
         for(sections in listOfSections){
             totalThings += sections.list.size
@@ -38,7 +38,7 @@ class ThingsTableViewModel: ViewModel() {
         return totalThings
     }
 
-    fun getTotalPrices(): Int {
+    fun getThingPriceSum(): Int {
         var totalPrices = 0
         for(sections in listOfSections) {
             for(thing in sections.list) {

@@ -11,4 +11,6 @@
     <string name="thingImage">Imagen cosa</string>
     <string name="cameraButton">Botón cámara</string>
     <string name="sectionLabel">Sección</string>
+    <string name="numberOfThings">Número de cosas: 0</string>
+    <string name="thingPriceSum">Suma de precios: $0</string>
 </resources>
