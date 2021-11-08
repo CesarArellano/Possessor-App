@@ -3,7 +3,6 @@ package com.cesararellano.possessorapp
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
@@ -16,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -40,7 +40,7 @@ class ThingFragment : Fragment() {
     private lateinit var photoFile: File
     private var cameraResp = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if( result.resultCode == Activity.RESULT_OK ) {
-            val data = result.data
+            // val data = result.data
             // viewToPhoto.setImageBitmap(data?.extras?.get("data") as Bitmap)
             viewToPhoto.setImageBitmap( BitmapFactory.decodeFile( photoFile.absolutePath ) )
         }
@@ -56,6 +56,13 @@ class ThingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        val onBackPressedCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback( viewLifecycleOwner, onBackPressedCallback )
+
         val textObservable = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -64,8 +71,10 @@ class ThingFragment : Fragment() {
                 when {
                     s.hashCode() == nameField.text.hashCode() -> {
                         if( s.toString().isNotEmpty() ) {
+                            onBackPressedCallback.isEnabled = false
                             thing.thingName = s.toString()
                         } else {
+                            onBackPressedCallback.isEnabled = true
                             Toast.makeText(requireContext(), "Este campo no puede estar vacío", Toast.LENGTH_LONG).show()
                         }
                     }
