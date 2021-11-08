@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,8 +19,9 @@ import kotlin.collections.ArrayList
 
 class ThingsTableFragment: Fragment() {
     // Propiedades para generar el RecyclerView.
-    private lateinit var thingRecyclerView: RecyclerView
-    private var adapter: ThingAdapter? = null
+    private lateinit var sectionsRecyclerView: RecyclerView
+    private var sectionsAdapter: SectionsAdapter ? = null
+
     private var interfaceCallback:ThingTableInterface? = null
     private val thingTableViewModel: ThingsTableViewModel by lazy {
         ViewModelProvider(this).get(ThingsTableViewModel::class.java) // Obtenemos los datos de ThingsTableViewModel
@@ -29,7 +29,7 @@ class ThingsTableFragment: Fragment() {
 
     // Creamos nuestra interfaz para cuando el usuario seleccione una cosa.
     interface ThingTableInterface {
-        fun onSelectedThing( thing: Thing )
+        fun onSelectedThing( thing: Thing, thingTable: ThingsTableViewModel)
     }
 
     // Utilizamos este método para setear el callback de la interfaz.
@@ -46,39 +46,9 @@ class ThingsTableFragment: Fragment() {
 
     // Este método nos permite actualizar la UI con el inventario recibido, al igual de manejar las acciones de Drag and Drop y el swipe delete.
     private fun updateUI() {
-        val inventary = thingTableViewModel.inventory
-        adapter = ThingAdapter(inventary)
-        thingRecyclerView.adapter = adapter
-
-        // Se generan los listeners dependiendo del gesto del usuario, se utiliza la clase abstracta RecyclerViewGestures.
-        val swipegestures = object : RecyclerViewGestures() {
-
-            // Acciones de Swipe
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                if(direction == ItemTouchHelper.LEFT) { // Tras hacer un swipe a la izquierda ejecutará el método deleteItem.
-                    adapter?.deleteItem(viewHolder.absoluteAdapterPosition)
-                }
-            }
-
-            // Acciones de Drag and Drop.
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                // Se obtienen las posiciones para actualizar los índices de la lista correctamente.
-                val fromPosition = viewHolder.absoluteAdapterPosition
-                val toPosition = target.absoluteAdapterPosition
-
-                Collections.swap(inventary, fromPosition, toPosition)
-                adapter?.notifyItemMoved(fromPosition, toPosition)
-
-                return false
-            }
-        }
-        // Se adjunta el RecyclerView al touchHelper.
-        val touchHelper = ItemTouchHelper(swipegestures)
-        touchHelper.attachToRecyclerView(thingRecyclerView)
+        val inventary = thingTableViewModel.listOfSections
+        sectionsAdapter = SectionsAdapter(inventary)
+        sectionsRecyclerView.adapter = sectionsAdapter
     }
 
     override fun onStart() {
@@ -99,47 +69,106 @@ class ThingsTableFragment: Fragment() {
     ): View? {
         // Creamos RecyclerView
         val view = inflater.inflate(R.layout.thing_list_fragment, container, false)
-        thingRecyclerView = view.findViewById(R.id.thingRecyclerView)
-        thingRecyclerView.layoutManager = LinearLayoutManager(context)
+        sectionsRecyclerView = view.findViewById(R.id.thingRecyclerView)
+        sectionsRecyclerView.layoutManager = LinearLayoutManager(context)
         updateUI()
         return view
     }
 
+    private inner class SectionsAdapter(var listOfSections: ArrayList<Sections>): RecyclerView.Adapter<SectionsAdapter.DataViewHolder>() {
+
+        inner class DataViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+            private val sectionNameTV: TextView = itemView.findViewById(R.id.section_title)
+            private val cosasRV: RecyclerView = itemView.findViewById(R.id.child_recycler_view)
+
+            fun bind(section: Sections, backgroundColor: Int) {
+                sectionNameTV.text = section.section
+                val thingAdapter = ThingAdapter(section.list)
+                cosasRV.layoutManager = LinearLayoutManager(context)
+                cosasRV.adapter = thingAdapter
+                cosasRV.setBackgroundColor(backgroundColor)
+                // Se generan los listeners dependiendo del gesto del usuario, se utiliza la clase abstracta RecyclerViewGestures.
+                val swipegestures = object : RecyclerViewGestures() {
+
+                    // Acciones de Swipe
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                        if(direction == ItemTouchHelper.LEFT) { // Tras hacer un swipe a la izquierda ejecutará el método deleteItem.
+                            thingAdapter.deleteItem(viewHolder.absoluteAdapterPosition)
+                        }
+                    }
+
+                    // Acciones de Drag and Drop.
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                    ): Boolean {
+                        // Se obtienen las posiciones para actualizar los índices de la lista correctamente.
+                        val fromPosition = viewHolder.absoluteAdapterPosition
+                        val toPosition = target.absoluteAdapterPosition
+
+                        Collections.swap(section.list, fromPosition, toPosition)
+                        thingAdapter.notifyItemMoved(fromPosition, toPosition)
+
+                        return false
+                    }
+                }
+                // Se adjunta el RecyclerView al touchHelper.
+                val touchHelper = ItemTouchHelper(swipegestures)
+                touchHelper.attachToRecyclerView(cosasRV)
+            }
+        }
+
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
+            val holder = LayoutInflater.from(parent.context).inflate(R.layout.sections_ui, parent, false)
+            return DataViewHolder(holder)
+        }
+
+        override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
+            val backgroundColor = getFragmentColor(position)
+            holder.bind(listOfSections[position], backgroundColor)
+            holder.itemView.setBackgroundColor(backgroundColor)
+        }
+
+        override fun getItemCount(): Int {
+            return listOfSections.size
+        }
+        fun getFragmentColor(position: Int): Int {
+
+            val priceColor = when(position) {
+                in -1..0 -> "#E45050"
+                in 0..1 -> "#E47D50"
+                in 1..2 -> "#BD8138"
+                in 2..3 -> "#35B046"
+                in 3..4 -> "#4BAF96"
+                in 4..5 -> "#47A8E7"
+                in 5..6 -> "#476BE7"
+                in 6..7 -> "#7747E7"
+                in 7..8 -> "#5F4CB7"
+                in 8..9 -> "#E747AD"
+                else -> "#B74C70"
+            }
+
+            return Color.parseColor(priceColor)
+        }
+    }
+
+
     private inner class ThingHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
-        var itemBackgroundColor = "#FF8B00"
 
         private lateinit var thing: Thing
 
         val nameTextView: TextView = itemView.findViewById(R.id.nameLabel)
         val priceTextView: TextView = itemView.findViewById(R.id.priceLabel)
         val serialNumberTextView: TextView = itemView.findViewById(R.id.serialNumberLabel)
-        val thingItemLayout: ConstraintLayout = itemView.findViewById(R.id.thingItemLayout)
-
         // Seteamos los valores de la cosa en la tabla ( item del RecyclerView ).
         @SuppressLint("SetTextI18n")
         fun binding(thing:Thing) {
-
             this.thing = thing
             nameTextView.text = this.thing.thingName
             priceTextView.text = "$${ thing.pesosValue }"
             serialNumberTextView.text = this.thing.serialNumber
-
-            // Se decide por el color de fondo del item dependiendo de su precio.
-            itemBackgroundColor = when( thing.pesosValue ) {
-                in 0..99 -> "#E45050"
-                in 100..199 -> "#E47D50"
-                in 200..299 -> "#BD8138"
-                in 300..399 -> "#35B046"
-                in 400..499 -> "#4BAF96"
-                in 500..599 -> "#47A8E7"
-                in 600..699 -> "#476BE7"
-                in 700..799 -> "#7747E7"
-                in 800..899 -> "#5F4CB7"
-                in 900..999 -> "#E747AD"
-                else -> "#B74C70"
-            }
-            // Seteamos el color de fondo.
-            thingItemLayout.setBackgroundColor( Color.parseColor(itemBackgroundColor) )
         }
 
         init {
@@ -147,7 +176,7 @@ class ThingsTableFragment: Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            interfaceCallback?.onSelectedThing(thing) // Se ejecuta la función onSelectedThing de nuestra ThingTableInterface.
+            interfaceCallback?.onSelectedThing(thing, thingTableViewModel) // Se ejecuta la función onSelectedThing de nuestra ThingTableInterface.
         }
     }
 
@@ -206,7 +235,7 @@ class ThingsTableFragment: Fragment() {
             R.id.newThingItem -> {
                 val newThing = Thing()
                 thingTableViewModel.addNewThing(newThing)
-                interfaceCallback?.onSelectedThing(newThing)
+                interfaceCallback?.onSelectedThing(newThing, thingTableViewModel)
             }
         }
 

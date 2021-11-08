@@ -10,4 +10,5 @@
     <string name="newThingItem">Nueva cosa</string>
     <string name="thingImage">Imagen cosa</string>
     <string name="cameraButton">Botón cámara</string>
+    <string name="sectionLabel">Sección</string>
 </resources>
