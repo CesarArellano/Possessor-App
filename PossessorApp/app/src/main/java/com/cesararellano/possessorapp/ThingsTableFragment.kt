@@ -26,7 +26,7 @@ class ThingsTableFragment: Fragment() {
     // Propiedades para generar el RecyclerView.
     private lateinit var sectionsRecyclerView: RecyclerView
     private var sectionsAdapter: SectionsAdapter ? = null
-    private lateinit var numberOfThings: TextView
+    private lateinit var totalThings: TextView
     private lateinit var thingPriceSum: TextView
     private var interfaceCallback:ThingTableInterface? = null
     private val thingTableViewModel: ThingsTableViewModel by lazy {
@@ -59,10 +59,10 @@ class ThingsTableFragment: Fragment() {
 
     @SuppressLint("SetTextI18n")
     fun updateFooter() {
-        val numberOfThingsViewModel = thingTableViewModel.getNumberOfThings()
-        val thingPriceSumViewModel: Int = thingTableViewModel.getThingPriceSum()
-        numberOfThings.text = "Número de cosas: $numberOfThingsViewModel"
-        thingPriceSum.text = "Suma de precios: $$thingPriceSumViewModel"
+        val numberOfThingsViewModel = thingTableViewModel.getTotalThings()
+        val thingPriceSumViewModel: Int = thingTableViewModel.getTotalPriceSum()
+        totalThings.text = "Total de cosas: $numberOfThingsViewModel"
+        thingPriceSum.text = "Suma total de precios: $$thingPriceSumViewModel"
     }
 
     override fun onResume() {
@@ -90,8 +90,8 @@ class ThingsTableFragment: Fragment() {
         val view = inflater.inflate(R.layout.thing_list_fragment, container, false)
         sectionsRecyclerView = view.findViewById(R.id.thingRecyclerView)
         sectionsRecyclerView.layoutManager = LinearLayoutManager(context)
-        numberOfThings = view.findViewById(R.id.numberOfThings)
-        thingPriceSum = view.findViewById(R.id.thingPriceSum)
+        totalThings = view.findViewById(R.id.totalThings)
+        thingPriceSum = view.findViewById(R.id.totalPriceSum)
         updateUI()
         updateFooter()
         return view
@@ -102,9 +102,15 @@ class ThingsTableFragment: Fragment() {
         inner class DataViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             private val sectionNameTV: TextView = itemView.findViewById(R.id.section_title)
             private val cosasRV: RecyclerView = itemView.findViewById(R.id.child_recycler_view)
+            private val numberOfThingsBySection: TextView = itemView.findViewById(R.id.numberOfThingsBySection)
+            private val thingPriceSumBySection: TextView = itemView.findViewById(R.id.thingPriceSumBySection)
 
+
+            @SuppressLint("SetTextI18n")
             fun bind(section: Sections, backgroundColor: Int) {
                 sectionNameTV.text = section.section
+                numberOfThingsBySection.text = "Número de cosas: ${ section.list.size }"
+                thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.list) }"
                 val thingAdapter = ThingAdapter(section.list)
                 cosasRV.layoutManager = LinearLayoutManager(context)
                 cosasRV.adapter = thingAdapter
@@ -139,6 +145,7 @@ class ThingsTableFragment: Fragment() {
                 val touchHelper = ItemTouchHelper(swipegestures)
                 touchHelper.attachToRecyclerView(cosasRV)
             }
+
         }
 
 
@@ -245,6 +252,7 @@ class ThingsTableFragment: Fragment() {
                 deletePhotoFile("${ inventary[position].thingId }.jpg")
                 inventary.removeAt(position)
                 updateFooter()
+                sectionsAdapter?.notifyDataSetChanged()
                 notifyDataSetChanged()
                 dialog.cancel()
             }
