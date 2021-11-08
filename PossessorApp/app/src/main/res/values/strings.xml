@@ -17,4 +17,7 @@
     <string name="totalPriceSum">Suma total de precios: $0</string>
     <string name="deleteImageButton">Eliminar imagen</string>
     <string name="orderByLabel">ASC</string>
+    <string name="thumbnailDescription">Thumbnail</string>
+    <string name="orderByDateDescription">Ordenar por fecha</string>
+    <string name="orderByAlphaDescription">Ordenar por alfabeto</string>
 </resources>

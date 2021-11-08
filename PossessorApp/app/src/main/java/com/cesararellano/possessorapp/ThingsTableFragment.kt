@@ -27,6 +27,7 @@ class ThingsTableFragment: Fragment() {
     // Propiedades para generar el RecyclerView.
     private lateinit var sectionsRecyclerView: RecyclerView
     private var sectionsAdapter: SectionsAdapter ? = null
+    // Dos TextView para el total de cosas y la suma total del precio de las cosas.
     private lateinit var totalThings: TextView
     private lateinit var thingPriceSum: TextView
     private var interfaceCallback:ThingTableInterface? = null
@@ -58,6 +59,7 @@ class ThingsTableFragment: Fragment() {
         sectionsRecyclerView.adapter = sectionsAdapter
     }
 
+    // Con esta función actualizamos el pie de página del total de cosas y la suma total que hay en el inventario.
     @SuppressLint("SetTextI18n")
     fun updateFooter() {
         val numberOfThingsViewModel = thingTableViewModel.getTotalThings()
@@ -66,19 +68,17 @@ class ThingsTableFragment: Fragment() {
         thingPriceSum.text = "Suma total de precios: $$thingPriceSumViewModel"
     }
 
+    // Si se pasa por onResume, se actualizará el pie de página.
     override fun onResume() {
         super.onResume()
         updateFooter()
     }
 
-    override fun onStart() {
-        super.onStart()
-        val appbar = activity as AppCompatActivity
-        appbar.supportActionBar?.title = "Possesor App"
-    }
-
+    // Se utiliza para cambiar el título del actionBar y ponerle su menú de opciones (agregar nueva cosa).
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val appbar = activity as AppCompatActivity
+        appbar.supportActionBar?.title = "Possesor App"
         setHasOptionsMenu(true)
     }
 
@@ -91,18 +91,22 @@ class ThingsTableFragment: Fragment() {
         val view = inflater.inflate(R.layout.thing_list_fragment, container, false)
         sectionsRecyclerView = view.findViewById(R.id.thingRecyclerView)
         sectionsRecyclerView.layoutManager = LinearLayoutManager(context)
+        // Hacemos referencia a los TextView.
         totalThings = view.findViewById(R.id.totalThings)
         thingPriceSum = view.findViewById(R.id.totalPriceSum)
-        updateUI()
+        updateUI() // Creamos el RecyclerView de las secciones.
         updateFooter()
         return view
     }
 
-    private inner class SectionsAdapter(var listOfSections: ArrayList<Sections>): RecyclerView.Adapter<SectionsAdapter.DataViewHolder>() {
+    // SectionsAdapter para el RecylerView principal.
+    private inner class SectionsAdapter(var listOfSections: ArrayList<Sections>): RecyclerView.Adapter<SectionsAdapter.SectionHolder>() {
 
-        inner class DataViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-            private val sectionNameTV: TextView = itemView.findViewById(R.id.section_title)
-            private val thingsRecyclerView: RecyclerView = itemView.findViewById(R.id.child_recycler_view)
+        // Section Holder para cada item de la sección.
+        inner class SectionHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+            // Se declaran los atributos que tendrá la sección.
+            private val sectionName: TextView = itemView.findViewById(R.id.sectionName)
+            private val thingsRecyclerView: RecyclerView = itemView.findViewById(R.id.thingsRecyclerView)
             private val numberOfThingsBySection: TextView = itemView.findViewById(R.id.numberOfThingsBySection)
             private val thingPriceSumBySection: TextView = itemView.findViewById(R.id.thingPriceSumBySection)
             private val orderByAlphaButton: ImageButton = itemView.findViewById(R.id.orderByAlphaButton)
@@ -113,45 +117,47 @@ class ThingsTableFragment: Fragment() {
             private var isSortByAscDate:Boolean = true
 
             @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
-            fun bind(section: Sections, backgroundColor: Int) {
-
-                sectionNameTV.text = section.sectionName
+            fun binding(section: Sections, backgroundColor: Int) {
+                // Se establecen los valores de la sección.
+                sectionName.text = section.sectionName
                 numberOfThingsBySection.text = "Número de cosas: ${ section.sectionList.size }"
                 thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.sectionList) }"
-
+                // Creamos el RecylerView anidado de las cosas.
                 val thingAdapter = ThingAdapter(section.sectionList)
                 thingsRecyclerView.layoutManager = LinearLayoutManager(context)
                 thingsRecyclerView.adapter = thingAdapter
                 thingsRecyclerView.setBackgroundColor(backgroundColor)
 
+                // Habilitamos o deshabilitamos los botones dependiendo si hay cosas en la sección específica.
                 orderByAlphaButton.isEnabled = section.sectionList.size > 0
                 orderByDateButton.isEnabled = section.sectionList.size > 0
 
                 orderByDateButton.setOnClickListener {
-                    isSortByAscDate = if( isSortByAscDate ) {
+                    // Ordenamos de forma ASC o DESC dependiendo de la bandera actual.
+                    if( isSortByAscDate ) {
                         section.sectionList.sortBy { it.originalCreationDate }
                         orderByDateLabel.text = "ASC"
-                        false
                     } else {
                         section.sectionList.sortByDescending { it.originalCreationDate }
                         orderByDateLabel.text = "DESC"
-                        true
                     }
-                    notifyDataSetChanged()
+
+                    isSortByAscDate = !isSortByAscDate // Invertimos la bandera.
+                    notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
                 }
 
                 orderByAlphaButton.setOnClickListener {
-
-                    isSortByAscAlpha = if( isSortByAscAlpha ) {
+                    // Ordenamos de forma ASC o DESC dependiendo de la bandera actual.
+                    if( isSortByAscAlpha ) {
                         section.sectionList.sortBy { it.thingName }
                         orderByAlphaLabel.text = "ASC"
-                        false
                     } else {
                         section.sectionList.sortByDescending { it.thingName }
                         orderByAlphaLabel.text = "DESC"
-                        true
                     }
-                    notifyDataSetChanged()
+
+                    isSortByAscAlpha = !isSortByAscAlpha // Invertimos la bandera.
+                    notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
                 }
 
                 // Se generan los listeners dependiendo del gesto del usuario, se utiliza la clase abstracta RecyclerViewGestures.
@@ -187,22 +193,25 @@ class ThingsTableFragment: Fragment() {
 
         }
 
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
+        // Inflamos el SectionHolder.
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionHolder {
             val holder = LayoutInflater.from(parent.context).inflate(R.layout.sections_ui, parent, false)
-            return DataViewHolder(holder)
+            return SectionHolder(holder)
         }
 
-        override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-            val backgroundColor = getFragmentColor(position)
-            holder.bind(listOfSections[position], backgroundColor)
+        // Ejecutamos el binding y le establecemos el backgroundColor a la sección.
+        override fun onBindViewHolder(holder: SectionHolder, position: Int) {
+            val backgroundColor = getSectionColor(position)
+            holder.binding(listOfSections[position], backgroundColor)
             holder.itemView.setBackgroundColor(backgroundColor)
         }
 
         override fun getItemCount(): Int {
             return listOfSections.size
         }
-        fun getFragmentColor(position: Int): Int {
+
+        // Función utilizada para obtener el color de la sección.
+        private fun getSectionColor(position: Int): Int {
 
             val priceColor = when(position) {
                 in -1..0 -> "#E45050"
@@ -284,9 +293,11 @@ class ThingsTableFragment: Fragment() {
             val builder = AlertDialog.Builder(activity)
             builder.setTitle("¡Atención!")
             builder.setMessage("¿Desea eliminar esta posesión?")
+
             builder.setOnDismissListener { // Si cierra el Dialog, dando tap fuera del mismo o dando al botón de back del teléfono, actualizará la vista.
                 notifyDataSetChanged()
             }
+
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
                 deletePhotoFile("${ inventory[position].thingId }.jpg")
                 inventory.removeAt(position)

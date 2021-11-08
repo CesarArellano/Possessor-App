@@ -52,6 +52,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/no_image" />
+        tools:srcCompat="@drawable/no_image"
+        android:contentDescription="@string/thumbnailDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
