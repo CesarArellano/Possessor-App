@@ -106,6 +106,7 @@ class ThingsTableViewModel: ViewModel() {
         return priceCounterBySection
     }
 
+    // Ordenamos de forma ASC o DESC por fecha dependiendo de la bandera actual.
     fun orderByDate(thingPriceValue:Int, isOrderByAsc: Boolean): String {
         val sectionPosition = getSectionPosition( thingPriceValue )
 
@@ -118,6 +119,7 @@ class ThingsTableViewModel: ViewModel() {
         }
     }
 
+    // Ordenamos de forma ASC o DESC por nombre dependiendo de la bandera actual.
     fun orderByAlpha(thingPriceValue:Int, isOrderByAsc: Boolean): String {
         val sectionPosition = getSectionPosition( thingPriceValue )
 
