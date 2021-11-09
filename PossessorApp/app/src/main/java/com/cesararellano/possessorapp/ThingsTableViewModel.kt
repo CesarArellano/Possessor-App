@@ -37,6 +37,11 @@ class ThingsTableViewModel: ViewModel() {
         inventory[position].sectionList.add(thing)
     }
 
+    fun deleteThing(thing: Thing) {
+        val position = getSectionPosition(thing.pesosValue)
+        inventory[position].sectionList.remove(thing)
+    }
+
     fun orderSectionList(thing: Thing, prevSectionIndex: Int) {
         val newPosition = getSectionPosition(thing.pesosValue)
         if( newPosition != prevSectionIndex ) {
@@ -99,5 +104,29 @@ class ThingsTableViewModel: ViewModel() {
         }
 
         return priceCounterBySection
+    }
+
+    fun orderByDate(thingPriceValue:Int, isOrderByAsc: Boolean): String {
+        val sectionPosition = getSectionPosition( thingPriceValue )
+
+        return if( isOrderByAsc ) {
+            inventory[sectionPosition].sectionList.sortBy { it.originalCreationDate }
+            "ASC"
+        } else {
+            inventory[sectionPosition].sectionList.sortByDescending { it.originalCreationDate }
+            "DESC"
+        }
+    }
+
+    fun orderByAlpha(thingPriceValue:Int, isOrderByAsc: Boolean): String {
+        val sectionPosition = getSectionPosition( thingPriceValue )
+
+        return if( isOrderByAsc ) {
+            inventory[sectionPosition].sectionList.sortBy { it.thingName }
+            "ASC"
+        } else {
+            inventory[sectionPosition].sectionList.sortByDescending { it.thingName }
+            "DESC"
+        }
     }
 }

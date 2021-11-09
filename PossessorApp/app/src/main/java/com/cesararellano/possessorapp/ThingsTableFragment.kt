@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,7 +33,7 @@ class ThingsTableFragment: Fragment() {
     private lateinit var thingPriceSum: TextView
     private var interfaceCallback:ThingTableInterface? = null
     private val thingTableViewModel: ThingsTableViewModel by lazy {
-        ViewModelProvider(this).get(ThingsTableViewModel::class.java) // Obtenemos los datos de ThingsTableViewModel
+        ViewModelProvider(this)[ThingsTableViewModel::class.java] // Obtenemos los datos de ThingsTableViewModel
     }
 
     // Creamos nuestra interfaz para cuando el usuario seleccione una cosa.
@@ -74,11 +75,16 @@ class ThingsTableFragment: Fragment() {
         updateFooter()
     }
 
-    // Se utiliza para cambiar el título del actionBar y ponerle su menú de opciones (agregar nueva cosa).
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    // Se utiliza para cambiar el título del actionBar.
+    override fun onStart() {
+        super.onStart()
         val appbar = activity as AppCompatActivity
         appbar.supportActionBar?.title = "Possesor App"
+    }
+
+    // Se utiliza para ponerle un menú de opciones al actionBar (agregar nueva cosa).
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
@@ -134,13 +140,7 @@ class ThingsTableFragment: Fragment() {
 
                 orderByDateButton.setOnClickListener {
                     // Ordenamos de forma ASC o DESC dependiendo de la bandera actual.
-                    if( isSortByAscDate ) {
-                        section.sectionList.sortBy { it.originalCreationDate }
-                        orderByDateLabel.text = "ASC"
-                    } else {
-                        section.sectionList.sortByDescending { it.originalCreationDate }
-                        orderByDateLabel.text = "DESC"
-                    }
+                    orderByDateLabel.text  = thingTableViewModel.orderByDate(section.sectionList[0].pesosValue, isSortByAscDate)
 
                     isSortByAscDate = !isSortByAscDate // Invertimos la bandera.
                     notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
@@ -148,13 +148,7 @@ class ThingsTableFragment: Fragment() {
 
                 orderByAlphaButton.setOnClickListener {
                     // Ordenamos de forma ASC o DESC dependiendo de la bandera actual.
-                    if( isSortByAscAlpha ) {
-                        section.sectionList.sortBy { it.thingName }
-                        orderByAlphaLabel.text = "ASC"
-                    } else {
-                        section.sectionList.sortByDescending { it.thingName }
-                        orderByAlphaLabel.text = "DESC"
-                    }
+                    orderByAlphaLabel.text  = thingTableViewModel.orderByAlpha(section.sectionList[0].pesosValue, isSortByAscAlpha)
 
                     isSortByAscAlpha = !isSortByAscAlpha // Invertimos la bandera.
                     notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
@@ -296,19 +290,29 @@ class ThingsTableFragment: Fragment() {
             builder.setMessage("¿Desea eliminar esta posesión?")
 
             builder.setOnDismissListener { // Si cierra el Dialog, dando tap fuera del mismo o dando al botón de back del teléfono, actualizará la vista.
+                sectionsAdapter?.notifyDataSetChanged()
                 notifyDataSetChanged()
             }
 
             builder.setPositiveButton("Confirmar") { dialog, _ -> // Confirma la eliminación de la cosa.
-                deletePhotoFile("${ inventory[position].thingId }.jpg")
-                inventory.removeAt(position)
-                updateFooter() // Actualizamos el pie de página
-                sectionsAdapter?.notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
-                notifyDataSetChanged() // Actualizamos el RecylerView de las cosas.
-                dialog.cancel()
+                try {
+                    deletePhotoFile("${ inventory[position].thingId }.jpg")
+                    thingTableViewModel.deleteThing(inventory[position])
+                    updateFooter() // Actualizamos el pie de página
+                    sectionsAdapter?.notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
+                    notifyDataSetChanged() // Actualizamos el RecylerView de las cosas.
+                    dialog.cancel()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    sectionsAdapter?.notifyDataSetChanged()
+                    notifyDataSetChanged()
+                    dialog.cancel()
+                }
+
             }
 
             builder.setNegativeButton("Cancelar") { dialog, _ -> // Cancela la acción de eliminar.
+                sectionsAdapter?.notifyDataSetChanged()
                 notifyDataSetChanged()
                 dialog.cancel()
             }
