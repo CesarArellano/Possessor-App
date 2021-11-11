@@ -20,4 +20,5 @@
     <string name="thumbnailDescription">Thumbnail</string>
     <string name="orderByDateDescription">Ordenar por fecha</string>
     <string name="orderByAlphaDescription">Ordenar por alfabeto</string>
+    <string name="changeViewLabel">List</string>
 </resources>

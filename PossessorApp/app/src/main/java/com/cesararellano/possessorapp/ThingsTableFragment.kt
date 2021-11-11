@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -115,12 +116,15 @@ class ThingsTableFragment: Fragment() {
             private val thingsRecyclerView: RecyclerView = itemView.findViewById(R.id.thingsRecyclerView)
             private val numberOfThingsBySection: TextView = itemView.findViewById(R.id.numberOfThingsBySection)
             private val thingPriceSumBySection: TextView = itemView.findViewById(R.id.thingPriceSumBySection)
+            private val changeViewButton:ImageButton = itemView.findViewById(R.id.changeViewButton)
+            private val changeViewLabel:TextView = itemView.findViewById(R.id.changeViewLabel)
             private val orderByAlphaButton: ImageButton = itemView.findViewById(R.id.orderByAlphaButton)
             private val orderByAlphaLabel: TextView = itemView.findViewById(R.id.orderByAlphaLabel)
             private val orderByDateButton: ImageButton = itemView.findViewById(R.id.orderByDateButton)
             private val orderByDateLabel: TextView = itemView.findViewById(R.id.orderByDateLabel)
             private var isSortByAscAlpha:Boolean = true
             private var isSortByAscDate:Boolean = true
+            private var changeView:Boolean = false
 
             @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
             fun binding(section: Sections, backgroundColor: Int) {
@@ -130,13 +134,24 @@ class ThingsTableFragment: Fragment() {
                 thingPriceSumBySection.text = "Suma de precios: $${ thingTableViewModel.getThingPriceSumBySection(section.sectionList) }"
                 // Creamos el RecylerView anidado de las cosas.
                 val thingAdapter = ThingAdapter(section.sectionList)
-                thingsRecyclerView.layoutManager = LinearLayoutManager(context)
+                thingsRecyclerView.layoutManager = GridLayoutManager(context, if(changeView) 2 else 1)
                 thingsRecyclerView.adapter = thingAdapter
                 thingsRecyclerView.setBackgroundColor(backgroundColor)
 
                 // Habilitamos o deshabilitamos los botones dependiendo si hay cosas en la sección específica.
-                orderByAlphaButton.isEnabled = section.sectionList.size > 0
-                orderByDateButton.isEnabled = section.sectionList.size > 0
+
+                changeViewButton.isEnabled = section.sectionList.size > 0
+                orderByAlphaButton.isEnabled = section.sectionList.size > 1
+                orderByDateButton.isEnabled = section.sectionList.size > 1
+
+
+                changeViewButton.setOnClickListener {
+                    changeView = !changeView
+                    changeViewLabel.text = if(changeView) "List" else "Grid"
+
+                    changeViewButton.setImageDrawable( ContextCompat.getDrawable(requireContext(), if(changeView) R.drawable.ic_baseline_view_list else R.drawable.ic_baseline_grid_on ))
+                    notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
+                }
 
                 orderByDateButton.setOnClickListener {
                     // Ordenamos de forma ASC o DESC dependiendo de la bandera actual.

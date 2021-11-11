@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
+
+    <ImageButton
+        android:id="@+id/changeViewButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/material_on_background_emphasis_medium"
+        android:contentDescription="@string/orderByDateDescription"
+        app:layout_constraintStart_toStartOf="@+id/changeViewLabel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_view_list" />
+
+    <ImageButton
+        android:id="@+id/orderByDateButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/material_on_background_emphasis_medium"
+        android:contentDescription="@string/orderByDateDescription"
+        app:layout_constraintStart_toEndOf="@+id/changeViewButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_date_range" />
+
     <TextView
         android:id="@+id/sectionName"
         style="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
@@ -57,22 +82,11 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/material_on_background_emphasis_medium"
+        android:contentDescription="@string/orderByAlphaDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/orderByDateButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_sort_by_alpha"
-        android:contentDescription="@string/orderByAlphaDescription" />
-
-    <ImageButton
-        android:id="@+id/orderByDateButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="@color/material_on_background_emphasis_medium"
-        app:layout_constraintStart_toStartOf="@+id/orderByDateLabel"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_date_range"
-        android:contentDescription="@string/orderByDateDescription" />
+        app:srcCompat="@drawable/ic_baseline_sort_by_alpha" />
 
     <TextView
         android:id="@+id/orderByAlphaLabel"
@@ -93,6 +107,17 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:text="@string/orderByLabel"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/thingsRecyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/orderByAlphaLabel" />
+
+    <TextView
+        android:id="@+id/changeViewLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="96dp"
+        android:text="@string/changeViewLabel"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/thingsRecyclerView"
