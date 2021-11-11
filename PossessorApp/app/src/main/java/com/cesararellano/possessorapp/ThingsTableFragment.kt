@@ -147,10 +147,10 @@ class ThingsTableFragment: Fragment() {
 
                 changeViewButton.setOnClickListener {
                     changeView = !changeView
-                    changeViewLabel.text = if(changeView) "List" else "Grid"
+                    changeViewLabel.text = if(changeView) "Grid" else "List"
 
-                    changeViewButton.setImageDrawable( ContextCompat.getDrawable(requireContext(), if(changeView) R.drawable.ic_baseline_view_list else R.drawable.ic_baseline_grid_on ))
-                    notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
+                    changeViewButton.setImageDrawable( ContextCompat.getDrawable(requireContext(), if(changeView) R.drawable.ic_baseline_grid_on else R.drawable.ic_baseline_view_list ))
+                    sectionsAdapter?.notifyDataSetChanged() // Actualizamos el RecyclerView de las secciones.
                 }
 
                 orderByDateButton.setOnClickListener {
