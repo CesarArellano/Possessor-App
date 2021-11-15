@@ -189,8 +189,13 @@ class ThingsTableFragment: Fragment() {
                         val fromPosition = viewHolder.absoluteAdapterPosition
                         val toPosition = target.absoluteAdapterPosition
 
-                        Collections.swap(section.sectionList, fromPosition, toPosition)
-                        thingAdapter.notifyItemMoved(fromPosition, toPosition)
+                        try {
+                            Collections.swap(section.sectionList, fromPosition, toPosition)
+                            thingAdapter.notifyItemMoved(fromPosition, toPosition)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
 
                         return false
                     }
@@ -239,7 +244,6 @@ class ThingsTableFragment: Fragment() {
             return Color.parseColor(priceColor)
         }
     }
-
 
     private inner class ThingHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
 

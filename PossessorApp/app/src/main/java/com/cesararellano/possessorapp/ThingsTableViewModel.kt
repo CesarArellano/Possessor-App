@@ -31,17 +31,19 @@ class ThingsTableViewModel: ViewModel() {
             inventory.add( Sections(section, arrayListOf()) )
         }
     }
-
+    // Función para agregar cosa al inventario.
     fun addNewThing(thing: Thing) {
         val position = getSectionPosition(thing.pesosValue)
         inventory[position].sectionList.add(thing)
     }
 
+    // Función para eliminar cosa del inventario.
     fun deleteThing(thing: Thing) {
         val position = getSectionPosition(thing.pesosValue)
         inventory[position].sectionList.remove(thing)
     }
 
+    // Esta función ayuda a ordenar en el arreglo de las secciones, la cosa seleccionada.
     fun orderSectionList(thing: Thing, prevSectionIndex: Int) {
         val newPosition = getSectionPosition(thing.pesosValue)
         if( newPosition != prevSectionIndex ) {

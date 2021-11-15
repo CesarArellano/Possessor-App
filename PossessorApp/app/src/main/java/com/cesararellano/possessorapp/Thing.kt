@@ -21,6 +21,7 @@ class Thing(): Parcelable {
         pesosValue = parcel.readInt()
         serialNumber = parcel.readString().toString()
         creationDate = parcel.readString().toString()
+        originalCreationDate = parcel.readSerializable() as Date
         thingId = parcel.readString().toString()
     }
 
@@ -34,6 +35,7 @@ class Thing(): Parcelable {
         dest.writeInt(pesosValue)
         dest.writeString(serialNumber)
         dest.writeString(creationDate)
+        dest.writeSerializable(originalCreationDate)
         dest.writeString(thingId)
     }
 

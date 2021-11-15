@@ -30,7 +30,7 @@ class ThingFragment : Fragment() {
     // Variable de referencia a la cosa, que recibe de ThingTableFragment.
     private lateinit var thing: Thing
 
-    // Variables de referencia a elementos del UI
+    // Variables de referencia a elementos de la UI
     private lateinit var nameField: EditText
     private lateinit var priceField: EditText
     private lateinit var serialNumberField: EditText
@@ -174,7 +174,7 @@ class ThingFragment : Fragment() {
         }
 
         deleteImageButton.setOnClickListener {
-            // Se elimina la imagen del storage, se establece el imageView con una imagen ilustrativa y deshabilitamos el botón.
+            // Se elimina la imagen del storage, se establece el ImageView con una imagen ilustrativa y deshabilitamos el botón.
             photoFile = getPhotoFile("${ thing.thingId }.jpg")
             photoFile.delete()
             viewToPhoto.setImageDrawable( ContextCompat.getDrawable(requireContext(), R.drawable.no_image) )

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity(), ThingsTableFragment.ThingTableInterface {
-    // Declaramos dichas propiedades para saber qué cosa fue seleccionada y tras regresar back al ThingTableFragment, el poder ordernarlo en la posición adecuada de las secciones.
+    // Declaramos dichas propiedades para saber qué cosa fue seleccionada y tras regresar al ThingTableFragment, podremos ordernarlo en la posición adecuada de las secciones.
     private var thingSelected = Thing()
     private var thingsTableViewModel: ThingsTableViewModel? = null
     private var currentThingPosition: Int = 0
